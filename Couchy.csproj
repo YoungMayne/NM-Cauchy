@@ -89,5 +89,8 @@
   <ItemGroup>
     <None Include="dependencies\n2.PNG" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="dependencies\n0PNG.PNG" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

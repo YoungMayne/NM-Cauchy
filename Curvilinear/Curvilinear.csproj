@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{766FF89D-A22F-44EB-8500-BD52B299BC1D}</ProjectGuid>
+    <ProjectGuid>{2934EB30-70E0-4EE7-8034-995F04463924}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Couchy</RootNamespace>
-    <AssemblyName>Couchy</AssemblyName>
+    <RootNamespace>Curvilinear</RootNamespace>
+    <AssemblyName>Curvilinear</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -45,7 +45,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="ZedGraph">
-      <HintPath>dependencies\ZedGraph.dll</HintPath>
+      <HintPath>..\MonteKarlo\ZedGraph.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -84,13 +84,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dependencies\n1.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="dependencies\n2.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="dependencies\n0PNG.PNG" />
+    <None Include="Resources\Formula2.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

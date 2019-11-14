@@ -15,9 +15,6 @@ namespace Curvilinear
     {
         private Random random;
 
-        private double a;
-        private double b;
-
         private double ax;
         private double bx;
 
@@ -36,16 +33,14 @@ namespace Curvilinear
 
             random = new Random();
 
-            NTextBox.Text = "100";
+            NTextBox.Text     = "100";
             stepsTextBox.Text = "3";
-            aTextBox.Text = "0";
-            bTextBox.Text = "2";
-            axTextBox.Text = "-1";
-            bxTextBox.Text = "0";
-            ayTextBox.Text = "0";
-            byTextBox.Text = "2";
-            azTextBox.Text = "0";
-            bzTextBox.Text = "1";
+            axTextBox.Text    = "-1";
+            bxTextBox.Text    = "0";
+            ayTextBox.Text    = "0";
+            byTextBox.Text    = "2";
+            azTextBox.Text    = "0";
+            bzTextBox.Text    = "1";
         }
 
         private double Function(double x, double y, double z)
@@ -53,52 +48,36 @@ namespace Curvilinear
             return 8 * y * y * z * Math.Exp(2 * x * y * z);
         }
 
-        private double FindMaximum()
+        private void FindMinMax(out double min, out double max)
         {
-            double max = Function(ax, ay, az);
+            double xStep = (bx - ax) / Math.Pow(N, 1.0 / 3.0);
+            double yStep = (by - ay) / Math.Pow(N, 1.0 / 3.0);
+            double zStep = (bz - az) / Math.Pow(N, 1.0 / 3.0);
             double temp;
 
-            for(double x = ax + (bx - ax) / N; x < bx; x += (bx - ax) / N)
+            min = Function(ax, ay, az);
+            max = Function(ax, ay, az);
+
+            for (double x = ax + xStep; x < bx; x += xStep)
             {
-                for (double y = ay + (by - ay) / N; y < by; y += (by - ay) / N)
+                for (double y = ay + yStep; y < by; y += yStep)
                 {
-                    for (double z = az + (bz - az) / N; z < bz; z += (bz - az) / N)
+                    for (double z = az + zStep; z < bz; z += zStep)
                     {
                         temp = Function(x, y, z);
 
-                        if(temp > max)
+                        if (temp > max)
                         {
                             max = temp;
                         }
-                    }
-                }
-            }
 
-            return max;
-        }
-
-        private double FindMinimum()
-        {
-            double min = Function(ax, ay, az);
-            double temp;
-
-            for (double x = ax + (bx - ax) / N; x < bx; x += (bx - ax) / N)
-            {
-                for (double y = ay + (by - ay) / N; y < by; y += (by - ay) / N)
-                {
-                    for (double z = az + (bz - az) / N; z < bz; z += (bz - az) / N)
-                    {
-                        temp = Function(x, y, z);
-
-                        if (temp < min)
+                        if(temp < min)
                         {
                             min = temp;
                         }
                     }
                 }
             }
-
-            return min;
         }
 
         private double MK1()
@@ -117,42 +96,44 @@ namespace Curvilinear
                 result += Function(x, y, z);
             }
 
-            return ((b - a) / (double)N) * result;
+            double volume = (bx - ax) * (by - ay) * (bz - az);
+
+            return (volume / (double)N) * result;
         }
 
         private double MK2()
         {
-            double d = FindMaximum();
-            double c = FindMinimum();
+            double x;
+            double y;
+            double z;
+            double d;
+            double c;
+
+            double random_result;
+            double function_result;
 
             uint k = 0u;
 
+            FindMinMax(out c, out d);
+
             for(uint i = 0; i < N; ++i)
             {
-                double x = ax + random.NextDouble() * (bx - ax);
-                double y = ay + random.NextDouble() * (by - ay);
-                double z = az + random.NextDouble() * (bz - az);
-                double random_result = c + random.NextDouble() * (d - c);
+                x = ax + random.NextDouble() * (bx - ax);
+                y = ay + random.NextDouble() * (by - ay);
+                z = az + random.NextDouble() * (bz - az);
+                random_result = c + random.NextDouble() * (d - c);
 
-                double function_result = Function(x, y, z);
+                function_result = Function(x, y, z);
 
-                if (0 > function_result)
+                if(Math.Abs(function_result) >= random_result)
                 {
-                    if (0 > random_result && function_result <= random_result)
-                    {
-                        ++k;
-                    }
-                }
-                else
-                {
-                    if (0 <= random_result && function_result >= random_result)
-                    {
-                        ++k;
-                    }
+                    ++k;
                 }
             }
 
-            return ((b - a) * k * (d - c) / N) - ((b - a) * (0 - c));
+            double volume = (bx - ax) * (by - ay) * (bz - az);
+
+            return (volume * k * (d - c) / N) - (volume * (0.0 - c));
         }
 
         private double NM()
@@ -161,21 +142,23 @@ namespace Curvilinear
             double y;
             double z;
 
-            double hx = (bx - ax) / N;
-            double hy = (by - ay) / N;
-            double hz = (bz - az) / N;
+            double n = Math.Pow(N, 1.0 / 3.0);
 
-            double ahx = ax + hx / 2;
-            double ahy = ay + hy / 2;
-            double ahz = az + hz / 2;
+            double hx = (bx - ax) / n;
+            double hy = (by - ay) / n;
+            double hz = (bz - az) / n;
+
+            double ahx = ax + hx / 2.0;
+            double ahy = ay + hy / 2.0;
+            double ahz = az + hz / 2.0;            
 
             double result = 0.0;
 
-            for(uint ix = 0; ix < N; ++ix)
+            for(uint ix = 0; ix < n + 0.5; ++ix)
             {
-                for(uint iy = 0; iy < N; ++iy)
+                for(uint iy = 0; iy < n + 0.5; ++iy)
                 {
-                    for(uint iz = 0; iz < N; ++iz)
+                    for(uint iz = 0; iz < n + 0.5; ++iz)
                     {
                         x = ahx + ix * hx;
                         y = ahy + iy * hy;
@@ -197,16 +180,6 @@ namespace Curvilinear
             }
 
             if (true != uint.TryParse(stepsTextBox.Text, out S))
-            {
-                return false;
-            }
-
-            if (true != double.TryParse(aTextBox.Text, out a))
-            {
-                return false;
-            }
-
-            if (true != double.TryParse(bTextBox.Text, out b))
             {
                 return false;
             }
@@ -259,16 +232,36 @@ namespace Curvilinear
             double mk1_result;
             double mk2_result;
 
+            double nm_avg  = 0.0;
+            double mk1_avg = 0.0;
+            double mk2_avg = 0.0;
+
+            CalculateButton.Hide();
+
             for(uint i = 0u; i < S; ++i)
             {
-                nm_result = NM();
+                nm_result  = NM();
                 mk1_result = MK1();
                 mk2_result = MK2();
 
                 rows.Add(N, nm_result, mk1_result, mk2_result);
 
                 N *= 10;
+
+                nm_avg  += nm_result;
+                mk1_avg += mk1_result;
+                mk2_avg += mk2_result;
             }
+
+            // Fill averages
+            rows.Add();
+            rows.Add();
+            rows[rows.Count - 1].Cells[1].Value = nm_avg  / S;
+            rows[rows.Count - 1].Cells[2].Value = mk1_avg / S;
+            rows[rows.Count - 1].Cells[3].Value = mk2_avg / S;
+
+
+            CalculateButton.Show();
         }
     }
 }

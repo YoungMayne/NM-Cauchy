@@ -107,19 +107,9 @@ namespace Couchy
 
                 function_result = Function(x);
 
-                if(0 > function_result)
+                if(Math.Abs(function_result) >= y)
                 {
-                    if(0 > y && function_result <= y)
-                    {
-                        ++k;
-                    }
-                }
-                else
-                {
-                    if(0 <= y && function_result >= y)
-                    {
-                        ++k;
-                    }
+                    ++k;
                 }
             }
 

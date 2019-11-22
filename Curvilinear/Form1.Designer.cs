@@ -121,6 +121,7 @@
             this.bxTextBox.Name = "bxTextBox";
             this.bxTextBox.Size = new System.Drawing.Size(45, 20);
             this.bxTextBox.TabIndex = 10;
+            this.bxTextBox.TextChanged += new System.EventHandler(this.ParametresChanded);
             // 
             // label4
             // 
@@ -138,6 +139,7 @@
             this.axTextBox.Name = "axTextBox";
             this.axTextBox.Size = new System.Drawing.Size(45, 20);
             this.axTextBox.TabIndex = 8;
+            this.axTextBox.TextChanged += new System.EventHandler(this.ParametresChanded);
             // 
             // label5
             // 
@@ -155,6 +157,7 @@
             this.byTextBox.Name = "byTextBox";
             this.byTextBox.Size = new System.Drawing.Size(45, 20);
             this.byTextBox.TabIndex = 14;
+            this.byTextBox.TextChanged += new System.EventHandler(this.ParametresChanded);
             // 
             // label6
             // 
@@ -172,6 +175,7 @@
             this.ayTextBox.Name = "ayTextBox";
             this.ayTextBox.Size = new System.Drawing.Size(45, 20);
             this.ayTextBox.TabIndex = 12;
+            this.ayTextBox.TextChanged += new System.EventHandler(this.ParametresChanded);
             // 
             // label7
             // 
@@ -189,6 +193,7 @@
             this.bzTextBox.Name = "bzTextBox";
             this.bzTextBox.Size = new System.Drawing.Size(45, 20);
             this.bzTextBox.TabIndex = 18;
+            this.bzTextBox.TextChanged += new System.EventHandler(this.ParametresChanded);
             // 
             // label8
             // 
@@ -206,6 +211,7 @@
             this.azTextBox.Name = "azTextBox";
             this.azTextBox.Size = new System.Drawing.Size(45, 20);
             this.azTextBox.TabIndex = 16;
+            this.azTextBox.TextChanged += new System.EventHandler(this.ParametresChanded);
             // 
             // label9
             // 

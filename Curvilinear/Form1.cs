@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +14,7 @@ namespace Curvilinear
 {
     public partial class MainForm : Form
     {
+        private Hashtable results;
         private Random random;
 
         private double ax;
@@ -31,7 +33,8 @@ namespace Curvilinear
         {
             InitializeComponent();
 
-            random = new Random();
+            random  = new Random();
+            results = new Hashtable();
 
             NTextBox.Text     = "100";
             stepsTextBox.Text = "3";
@@ -45,7 +48,7 @@ namespace Curvilinear
 
         private double Function(double x, double y, double z)
         {
-            return 8 * y * y * z * Math.Exp(2 * x * y * z);
+            return 8.0 * y * y * z * Math.Exp(2.0 * x * y * z);
         }
 
         private void FindMinMax(out double min, out double max)
@@ -148,9 +151,9 @@ namespace Curvilinear
             double hy = (by - ay) / n;
             double hz = (bz - az) / n;
 
-            double ahx = ax + hx / 2.0;
-            double ahy = ay + hy / 2.0;
-            double ahz = az + hz / 2.0;            
+            double ahx = ax + hx * 0.5;
+            double ahy = ay + hy * 0.5;
+            double ahz = az + hz * 0.5;            
 
             double result = 0.0;
 
@@ -225,6 +228,8 @@ namespace Curvilinear
                 return;
             }
 
+            List<double> method_result = new List<double>();
+
             DataGridViewRowCollection rows = Table.Rows;
             rows.Clear();
 
@@ -240,9 +245,26 @@ namespace Curvilinear
 
             for(uint i = 0u; i < S; ++i)
             {
-                nm_result  = NM();
-                mk1_result = MK1();
-                mk2_result = MK2();
+                if(results.ContainsKey(N))
+                {
+                    nm_result  = ((List<double>)(results[N]))[0];
+                    mk1_result = ((List<double>)(results[N]))[1];
+                    mk2_result = ((List<double>)(results[N]))[2];
+                }
+                else
+                {
+                    method_result.Clear();
+
+                    nm_result  = NM();
+                    mk1_result = MK1();
+                    mk2_result = MK2();
+
+                    method_result.Add(nm_result);
+                    method_result.Add(mk1_result);
+                    method_result.Add(mk2_result);
+
+                    results.Add(N, method_result);
+                }
 
                 rows.Add(N, nm_result, mk1_result, mk2_result);
 
@@ -262,6 +284,11 @@ namespace Curvilinear
 
 
             CalculateButton.Show();
+        }
+
+        private void ParametresChanded(object sender, EventArgs e)
+        {
+            results.Clear();
         }
     }
 }

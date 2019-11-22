@@ -263,7 +263,7 @@ namespace Curvilinear
                     method_result.Add(mk1_result);
                     method_result.Add(mk2_result);
 
-                    results.Add(N, method_result);
+                    results.Add(N, new List<double>(method_result));
                 }
 
                 rows.Add(N, nm_result, mk1_result, mk2_result);

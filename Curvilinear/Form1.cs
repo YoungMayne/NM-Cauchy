@@ -17,6 +17,8 @@ namespace Curvilinear
         private Hashtable results;
         private Random random;
 
+        private double exact;
+
         private double ax;
         private double bx;
 
@@ -44,6 +46,8 @@ namespace Curvilinear
             byTextBox.Text    = "2";
             azTextBox.Text    = "0";
             bzTextBox.Text    = "1";
+
+            exact = 5 - Math.Exp(-4);
         }
 
         private double Function(double x, double y, double z)
@@ -141,11 +145,7 @@ namespace Curvilinear
 
         private double NM()
         {
-            double x;
-            double y;
-            double z;
-
-            double n = Math.Pow(N, 1.0 / 3.0);
+            double n = (ulong)Math.Pow(N, 1.0 / 3.0);
 
             double hx = (bx - ax) / n;
             double hy = (by - ay) / n;
@@ -157,17 +157,13 @@ namespace Curvilinear
 
             double result = 0.0;
 
-            for(uint ix = 0; ix < n + 0.5; ++ix)
+            for(double ix = ahx; ix < bx; ix += hx)
             {
-                for(uint iy = 0; iy < n + 0.5; ++iy)
+                for(double iy = ahy; iy < by; iy += hy)
                 {
-                    for(uint iz = 0; iz < n + 0.5; ++iz)
+                    for(double iz = ahz; iz < bz; iz += hz)
                     {
-                        x = ahx + ix * hx;
-                        y = ahy + iy * hy;
-                        z = ahz + iz * hz;
-
-                        result += hx * hy * hz * Function(x, y, z);
+                        result += hx * hy * hz * Function(ix, iy, iz);
                     }
                 }
             }
@@ -255,9 +251,9 @@ namespace Curvilinear
                 {
                     method_result.Clear();
 
-                    nm_result  = NM();
-                    mk1_result = MK1();
-                    mk2_result = MK2();
+                    nm_result  = Math.Abs(exact - NM());
+                    mk1_result = Math.Abs(exact - MK1());
+                    mk2_result = Math.Abs(exact - MK2());
 
                     method_result.Add(nm_result);
                     method_result.Add(mk1_result);
@@ -281,7 +277,6 @@ namespace Curvilinear
             rows[rows.Count - 1].Cells[1].Value = nm_avg  / S;
             rows[rows.Count - 1].Cells[2].Value = mk1_avg / S;
             rows[rows.Count - 1].Cells[3].Value = mk2_avg / S;
-
 
             CalculateButton.Show();
         }

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common.csproj", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Curvilinear", "Curvilinear\Curvilinear.csproj", "{2934EB30-70E0-4EE7-8034-995F04463924}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomValue", "RandomValue\RandomValue.csproj", "{B91689EA-A238-4CBF-9383-CD3E8F31180F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2934EB30-70E0-4EE7-8034-995F04463924}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2934EB30-70E0-4EE7-8034-995F04463924}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2934EB30-70E0-4EE7-8034-995F04463924}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B91689EA-A238-4CBF-9383-CD3E8F31180F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B91689EA-A238-4CBF-9383-CD3E8F31180F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B91689EA-A238-4CBF-9383-CD3E8F31180F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B91689EA-A238-4CBF-9383-CD3E8F31180F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

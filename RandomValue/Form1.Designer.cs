@@ -46,6 +46,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.MedianLabel = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.KolmogorovStateLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Table)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nUpDown)).BeginInit();
             this.SuspendLayout();
@@ -211,11 +213,31 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 189);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(28, 13);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "ЗСК";
+            // 
+            // KolmogorovStateLabel
+            // 
+            this.KolmogorovStateLabel.AutoSize = true;
+            this.KolmogorovStateLabel.Location = new System.Drawing.Point(108, 189);
+            this.KolmogorovStateLabel.Name = "KolmogorovStateLabel";
+            this.KolmogorovStateLabel.Size = new System.Drawing.Size(13, 13);
+            this.KolmogorovStateLabel.TabIndex = 16;
+            this.KolmogorovStateLabel.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(536, 689);
+            this.Controls.Add(this.KolmogorovStateLabel);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.MedianLabel);
             this.Controls.Add(this.label5);
@@ -260,5 +282,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label MedianLabel;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label KolmogorovStateLabel;
     }
 }

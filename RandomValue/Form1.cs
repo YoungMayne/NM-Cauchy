@@ -13,6 +13,7 @@ namespace RandomValue
 {
     public partial class Form1 : Form
     {
+        private Random random;
         private const double ax = -1;
         private const double bx = 1;
         private uint n = 5;
@@ -26,33 +27,38 @@ namespace RandomValue
             Graph.GraphPane.YAxis.Min = -1;
             Graph.GraphPane.XAxis.Min = -1.2;
             Graph.GraphPane.YAxis.Max = 1;
+            nUpDown.Maximum = 10000000000000000;
+            random = new Random();
         }
 
-        private double Function(double x, double y, double z)
+        private double Function(double x)
         {
             if ((ax <= x) && (bx >= x))
             {
-                return 3.0 / 8.0 * ((x * x) + (2.0 * x) + 1);
+                return (3.0 / 8.8) * ((Math.Pow(x, 3) + 1) / 3.0 + Math.Pow(x, 2) + x);
             }
             else
             {
                 return 0.0;
             }
+        }        
+
+        private double InverseFunction(double r)
+        {
+            return (2.0 * Math.Pow(r, 1.0 / 3.0)) - 1;
         }
 
-        private List<Tuple<double, double>> Discrete()
+        private List<Tuple<double, double>> GetInitialized()
         {
             List<Tuple<double, double>> result = new List<Tuple<double, double>>();
+            double random_value;
+            double function_value;
 
-            double H = 0;
-            for (double ix = ax; ix <= bx; ix += (bx - ax) / (n - 1))
+            for(uint i = 0u; i < n; ++i)
             {
-                H += Function(ix, 0, 0);
-            }
-
-            for (double ix = ax; ix <= bx; ix += (bx - ax) / (n - 1))
-            {
-                result.Add(new Tuple<double, double>(ix, Function(ix, 0, 0) / H));
+                random_value = random.NextDouble();
+                function_value = InverseFunction(random_value);
+                result.Add(new Tuple<double, double>(function_value, Function(function_value)));
             }
 
             return result;
@@ -62,7 +68,7 @@ namespace RandomValue
         {
             if (0 < sorted.Count)
             {
-                return sorted[sorted.Count - 1].Item2 - sorted[0].Item2;
+                return sorted[sorted.Count - 1].Item1 - sorted[0].Item1;
             }
 
             return 0.0;
@@ -74,10 +80,10 @@ namespace RandomValue
 
             for (int i = 0; i < list.Count; ++i)
             {
-                result += list[i].Item1 * list[i].Item2;
+                result += list[i].Item1;
             }
 
-            return 1.0 / n * result;
+            return result / n;
         }
 
         private void Sort(List<Tuple<double, double>> list)
@@ -125,28 +131,83 @@ namespace RandomValue
         {
             if (sorted.Count % 2 == 1)
             {
-                return sorted[sorted.Count / 2].Item2;
+                return sorted[sorted.Count / 2].Item1;
             }
             else
             {
-                return (sorted[(sorted.Count / 2) - 1].Item2 +
-                        sorted[(sorted.Count / 2) + 0].Item2) /
+                return (sorted[(sorted.Count / 2) - 1].Item1 +
+                        sorted[(sorted.Count / 2) + 0].Item1) /
                         2;
             }
         }
 
+        private double GetKolmogorovState(List<Tuple<double, double>> sorted)
+        {
+            List<double> emp = new List<double>();
+            double result = 0.0;
+
+            for(double i = 0.0; i < n; ++i)
+            {
+                emp.Add(i / n);
+            }
+
+            if(1 < n)
+            {
+                if(Math.Abs(sorted[1].Item2) > result)
+                {
+                    result = Math.Abs(sorted[1].Item2);
+                }
+                else if (1 == n)
+                {
+                    if (Math.Abs(sorted[0].Item2 - emp[0]) > result)
+                    {
+                        result = Math.Abs(sorted[0].Item2 - emp[0]);
+                    }
+
+                    if(Math.Abs(1 - sorted[0].Item2) > result)
+                    {
+                        result = Math.Abs(1 - sorted[0].Item2);
+                    }
+                }
+            }
+
+            for(int i = 0; i < n - 1; ++i)
+            {
+                if(Math.Abs(emp[i] - sorted[i].Item2) > result)
+                {
+                    result = Math.Abs(emp[i] - sorted[i].Item2);
+                }
+
+                if(Math.Abs(emp[i + 1] - sorted[i].Item2) > result)
+                {
+                    result = Math.Abs(emp[i + 1] - sorted[i].Item2);
+                }
+            }
+
+            if (Math.Abs(emp[(int)n - 1] - sorted[(int)n - 1].Item2) > result)
+            {
+                result = Math.Abs(emp[(int)n - 1] - sorted[(int)n - 1].Item2);
+            }
+
+            if (Math.Abs(1 - sorted[(int)n - 1].Item2) > result)
+            {
+                result = Math.Abs(1 - sorted[(int)n - 1].Item2);
+            }
+
+            return result * Math.Sqrt(n);
+        }
+
         private double StatisticalDispersion(List<Tuple<double, double>> list)
         {
-            double a = 0;
-            double b = 0;
+            double expectation = StatisticalExpectation(list);
+            double result = 0.0;
 
             for (int i = 0; i < list.Count; ++i)
             {
-                a += Math.Pow(list[i].Item1, 2) * list[i].Item2;
-                b += list[i].Item1 * list[i].Item2;
+                result += Math.Pow((list[i].Item1 - expectation), 2.0);
             }
 
-            return a - b * b;
+            return result / n;
         }
 
 
@@ -155,39 +216,33 @@ namespace RandomValue
             PointPairList theoretical = new PointPairList();
             PointPairList emperical   = new PointPairList();
             GraphPane pane            = Graph.GraphPane;
+            double step               = (bx - ax) / n;
 
-            LineItem line = new LineItem("Эмпирическая функция", new[] { list[0].Item1 - 1, list[0].Item1 },
-                                         new[] { 0.0, 0.0 },
-                                         Color.Red, SymbolType.None);
+            for(double a = ax; a <= bx; a += (bx - ax) / n)
+            {
+                theoretical.Add(new PointPair(a, Function(a)));                
+            }
+
+            for(int i = 1; i < n; ++i)
+            {
+                emperical.Add(new PointPair(list[i].Item1, (double)i / n ));
+                emperical.Add(new PointPair(list[i - 1].Item1, (double)i / n));
+            }
 
             pane.CurveList.Clear();
-            pane.CurveList.Add(new LineItem(line));
 
-            for (int i = 1; i < list.Count; ++i)
-            {
-                line = new LineItem(String.Empty, new[] { list[i].Item1, list[i - 1].Item1 },
-                                                            new[] { list[i].Item2, list[i].Item2 },
-                                                            Color.Red, SymbolType.None);
+            pane.AddCurve("Интегральная функция", theoretical, Color.Blue, SymbolType.None);
+            pane.AddCurve("Эмперическая функция", emperical, Color.Red, SymbolType.None);
 
-                pane.CurveList.Add(new LineItem(line));
-            }
-
-            for (int i = 0; i < list.Count; ++i)
-            {
-                theoretical.Add(new PointPair(list[i].Item1, list[i].Item2));
-            }
-
-            pane.AddCurve("Теоретическая функция", theoretical, Color.Blue, SymbolType.None);
-
-            Graph.AxisChange();
             Graph.Refresh();
+            Graph.AxisChange();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             n = (uint)nUpDown.Value;
 
-            var a = Discrete();
+            var a = GetInitialized();
 
             Sort(a);
 
@@ -196,6 +251,7 @@ namespace RandomValue
             DispersionLabel.Text = StatisticalDispersion(a).ToString();
             FacionLabel.Text = FashionNumber(a).Item2.ToString();
             MedianLabel.Text = Median(a).ToString();
+            KolmogorovStateLabel.Text = GetKolmogorovState(a).ToString();
 
             Table.Rows.Clear();
             for (int i = 0; i < a.Count; ++i)
@@ -220,7 +276,7 @@ namespace RandomValue
             }
 
             // "CompareTo()" method 
-            return x.Item2.CompareTo(y.Item2);
+            return x.Item1.CompareTo(y.Item1);
         }
     }
 }
